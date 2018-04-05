@@ -7,7 +7,6 @@ exports.up = (knex, Promise) => {
     table.specificType('hashed_password', 'char(60)').notNullable()
     table.dateTime('created_at').notNullable().defaultTo(knex.raw('now()'))
     table.dateTime('updated_at').notNullable().defaultTo(knex.raw('now()'))
-
   })
 
 
