@@ -6,7 +6,9 @@ const express = require('express');
 const router = express.Router();
 const knex = require('../knex');
 const humps = require('humps');
-// YOUR CODE HERE
+const KEY = process.env.JWT_KEY
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 router.get('/books', (req, res, next) => {
   knex('books')
