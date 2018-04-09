@@ -23,6 +23,7 @@ router.get('/token', (req, res, next) => {
 
 router.post('/token', (req, res, next) => {
   knex('users')
+  .where('email', req.body.email)
     .then((data) => {
       const user = {
         id: data[0].id,
