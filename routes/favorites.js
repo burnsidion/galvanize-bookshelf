@@ -15,7 +15,9 @@ const bcrypt = require('bcrypt');
 
 router.get('/favorites', (req, res, next) => {
   if(req.cookies.token){
+    let token = jwt.decode(req.cookies.token)
     knex.select('*').from('favorites')
+      .where('user_id', token.id)
       .join('books', 'books.id', 'favorites.book_id')
       .then((data) => {
         res.send(humps.camelizeKeys(data))
@@ -29,8 +31,10 @@ router.get('/favorites', (req, res, next) => {
 
 router.get('/favorites/check?', (req, res, next) => {
   if (req.cookies.token) {
+    let token = jwt.decode(req.cookies.token)
     knex('favorites')
       .select('*')
+      .where('user_id', token.id)
       .where('book_id', req.query.bookId)
       .then(data => {
         if (data.length > 0) {
@@ -48,18 +52,18 @@ router.get('/favorites/check?', (req, res, next) => {
 router.post('/favorites', (req, res, next) => {
   if (req.cookies.token) {
     let token = jwt.decode(req.cookies.token)
-
     knex('favorites')
-      .select('*')
-      .insert({
-        id: req.body.id,
-        book_id: req.body.bookId,
-        user_id: token.id
-      })
-      .returning('*')
-      .then(data => {
-        res.json(humps.camelizeKeys(data[0]))
-      })
+    .where('user_id', token.id)
+    .select('*')
+    .insert({
+      id: req.body.id,
+      book_id: req.body.bookId,
+      user_id: token.id
+    })
+    .returning('*')
+    .then(data => {
+      res.json(humps.camelizeKeys(data[0]))
+    })
 
   } else {
     res.status(401).type('text/plain').send('Unauthorized')
@@ -68,10 +72,13 @@ router.post('/favorites', (req, res, next) => {
 
 })
 
+
 router.delete('/favorites', (req, res, next) => {
   if (req.cookies.token) {
+    let token = jwt.decode(req.cookies.token)
     knex('favorites')
       .where('book_id', req.body.bookId)
+      .where('user_id', token.id)
       .del()
       .returning(['book_id', 'user_id'])
       .then(data => {
