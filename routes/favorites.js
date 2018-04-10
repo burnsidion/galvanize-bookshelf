@@ -48,7 +48,7 @@ router.get('/favorites/check?', (req, res, next) => {
 router.post('/favorites', (req, res, next) => {
   if (req.cookies.token) {
     let token = jwt.decode(req.cookies.token)
-    console.log(token.id);
+
     knex('favorites')
       .select('*')
       .insert({
